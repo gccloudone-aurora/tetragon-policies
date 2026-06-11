@@ -64,6 +64,42 @@ tetragon:
     type: ClusterIP
     port: 2112
 
+# Infrastructure and deployment configuration
+# Customize these for your environment
+infrastructure:
+  # Tetragon deployment namespace
+  tetragonNamespace: kube-system
+  
+  # Storage configuration
+  storage:
+    # PVC name for event export logs
+    pvcName: tetragon-logs
+    # Storage size (Gi)
+    size: 10Gi
+    # Storage class (e.g., azurefile-premium, standard)
+    className: azurefile-premium
+    # Access mode for PVC
+    accessMode: ReadWriteMany
+  
+  # Metrics and monitoring
+  metrics:
+    # Tetragon metrics port
+    port: 2112
+    # Prometheus scrape interval
+    scrapeInterval: 30s
+  
+  # Prometheus integration
+  prometheus:
+    # Prometheus namespace
+    namespace: prometheus-system
+    # Prometheus release label selector
+    releaseLabel: prometheus
+  
+  # Pod resilience
+  podDisruptionBudget:
+    # Minimum available pods during disruptions
+    minAvailable: 1
+
   config:
     exportFilePath: /var/run/cilium/tetragon/$(NODE_NAME)/tetragon.log
     exportFileMaxSizeMb: 50

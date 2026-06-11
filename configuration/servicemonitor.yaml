@@ -2,16 +2,16 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: tetragon-agent
-  namespace: prometheus-system
+  namespace: PROMETHEUS_NAMESPACE
   labels:
-    release: prometheus
+    release: PROMETHEUS_RELEASE_LABEL
 spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: tetragon
   namespaceSelector:
     matchNames:
-      - kube-system
+      - TETRAGON_NAMESPACE
   endpoints:
-    - port: 2112
-      interval: 30s
+    - port: METRICS_PORT
+      interval: SCRAPE_INTERVAL

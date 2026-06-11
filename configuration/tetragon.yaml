@@ -20,6 +20,7 @@ enable-process-ns: true
 event-queue-size: 10000
 export-aggregation-buffer-size: 10000
 export-aggregation-window-size: 15s
+# Export filters (leave empty to allow all events)
 export-allowlist:
 export-denylist:
 export-file-compress: true
@@ -28,15 +29,21 @@ export-file-max-size-mb: 50
 export-file-rotation-interval: 0s
 export-filename: /var/run/cilium/tetragon/$(NODE_NAME)/tetragon.log
 export-rate-limit: -1
+# Field filters for event reduction (empty = no filtering)
 field-filters:
 force-small-progs: false
+# gops address for runtime inspection (empty = disabled)
 gops-address:
+# kernel BTF path (empty = auto-detect)
 kernel:
 log-format: text
 log-level: info
+# metrics-server address (empty = default)
 metrics-server:
+# metrics label filters (empty = no filtering)
 metrics-label-filter:
 netns-dir: /var/run/docker/netns/
+# pprof address for profiling (empty = disabled)
 pprof-address:
 process-cache-size: 65536
 procfs: /proc/
