@@ -12,10 +12,9 @@ helmCharts:
 
 resources:
   - pvc.yaml
-  - policies/tetragon-basic-policies.yaml
+  - ../si-3
   - netpol.yaml
   - servicemonitor.yaml
-  - grafana/tetragon-dashboard.yaml
   - poddisruptionbudget.yaml
 
 images:

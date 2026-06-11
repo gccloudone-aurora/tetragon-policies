@@ -1,8 +1,13 @@
 # Tetragon configuration
 
-This folder contains the runtime configuration examples used for this repository.
+This folder contains the runtime deployment artifacts for Tetragon in this repository.
 
-- `tetragon.yaml`: cluster-specific Tetragon runtime configuration for a Kubernetes deployment, inspired by a deployment from The Zone at StatCan.
-- `tetragon.conf.d/`: individual drop-in snippets for `/etc/tetragon/tetragon.conf.d/`.
+- `kustomization.yaml`: Kustomize application that deploys the Tetragon Helm chart, persistent storage, Prometheus scrape support, and active SI-3 policies.
+- `values.yaml`: Helm chart values for the Tetragon agent/operator and export persistence.
+- `tetragon.yaml`: runtime Tetragon configuration sample for direct config mounting or chart-value translation.
+- `tetragon.conf.d/`: optional drop-in snippets for `/etc/tetragon/tetragon.conf.d/`.
+- `argocd-application.yaml`: example ArgoCD Application manifest for deploying this folder.
 
-The original generic upstream template has been replaced with a configuration that is more appropriate for a security observability deployment. The current files are intended to be a cleaned and cluster-appropriate replacement.
+Active SI-3 policy definitions are sourced from `../si-3` and are included in the Kustomize application.
+
+The current files are intended to be a cleaned and cluster-appropriate replacement for generic upstream runtime templates.
