@@ -1,61 +1,16 @@
-# This 'privileges-raise' Tracing Policy monitors processes trying
-# to raise their privileges:
+# This 'privileges-raise' Tracing Policy monitors privilege escalation
+# operations involving capability and UID/GID changes.
 #
-# 1. Unprivileged creating user namespace to gain new capabilities.
+# Description:
+#  Detects processes that alter their effective capabilities using capset and
+#  watches for credential-change system calls that can raise privileges.
+#  This helps identify suspicious attempts to gain extra rights inside a
+#  container or pod.
 #
-# 2. Setting or changing capabilities using the capset system call.
+# Note:
+#  This policy is focused on operational privilege changes, not on network or
+#  file access enforcement.
 #
-# 3. Change their uids/gids to user root.
-#
-#  __sys_setuid
-#    - __x64_sys_setuid
-#    - __ia32_sys_setuid
-#    - __x64_sys_setuid16
-#    - __ia32_sys_setuid16
-#
-#  __sys_setgid
-#    - __x64_sys_setgid
-#    - __ia32_sys_setgid
-#    - __x64_sys_setgid16
-#    - __ia32_sys_setgid16
-#
-#  __sys_setreuid
-#    - __x64_sys_setreuid
-#    - __ia32_sys_setreuid
-#    - __x64_sys_setreuid16
-#    - __ia32_sys_setreuid16
-#
-#  __sys_setregid
-#    - __x64_sys_setregid
-#    - __ia32_sys_setregid
-#    - __x64_sys_setregid16
-#    - __ia32_sys_setregid16
-#
-# __sys_setresuid
-#    - __x64_sys_setresuid
-#    - __ia32_sys_setresuid
-#    - __x64_sys_setresuid16
-#    - __ia32_sys_setresuid16
-#
-# __sys_setresgid
-#    - __x64_sys_setresgid
-#    - __ia32_sys_setresgid
-#    - __x64_sys_setresgid16
-#    - __ia32_sys_setresgid16
-#
-# __sys_setfsuid
-#    - __x64_sys_setfsuid
-#    - __ia32_sys_setfsuid
-#    - __x64_sys_setfsuid16
-#    - __ia32_sys_setfsuid16
-#
-# __sys_setfsgid
-#    - __x64_sys_setfsgid
-#    - __ia32_sys_setfsgid
-#    - __x64_sys_setfsgid16
-#    - __ia32_sys_setfsgid16
-#
-
 apiVersion: cilium.io/v1alpha1
 kind: TracingPolicy
 metadata:

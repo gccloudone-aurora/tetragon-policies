@@ -1,0 +1,54 @@
+# This 'process-creds-changed' Tracing Policy monitors kernel credential
+# lifecycle functions such as commit_creds, override_creds, and revert_creds.
+#
+# Description:
+#  Captures the kernel events that install or restore process credentials.
+#  This provides insight into privilege transitions and credential changes
+#  during exec, namespace changes, and elevated operations.
+#
+# Note:
+#  The policy may generate a high volume of events because commit_creds is
+#  invoked for many legitimate process transitions.
+#  Use namespace selectors to limit noise to container workloads if needed.
+#
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: "process-creds-changed"
+  #annotations:
+    #author: "Djalal Harouni"
+spec:
+  kprobes:
+  - call: "commit_creds"
+    syscall: false
+    args:
+    - index: 0  # The new credentials to apply
+      type: "cred"
+    selectors:
+      - matchNamespaces:
+        - namespace: Pid
+          operator: NotIn
+          values:
+          - "host_ns"
+        matchActions:
+        - action: Post
+          rateLimit: "1m"
+  - call: "override_creds"
+    syscall: false
+    args:
+    - index: 0  # The new credentials to apply
+      type: "cred"
+    selectors:
+      - matchActions:
+        - action: Post
+          rateLimit: "1m"
+  - call: "revert_creds"
+    syscall: false
+    args:
+    - index: 0  # The old credentials to restore
+      type: "cred"
+    selectors:
+      - matchActions:
+        - action: Post
+          rateLimit: "1m"
+

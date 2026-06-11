@@ -1,3 +1,11 @@
+# This tracing policy 'file-monitoring-filtered' monitors write and truncate
+# operations against a sensitive file.
+#
+# Description:
+#  Uses security_file_permission, security_mmap_file, and security_path_truncate
+#  probes to detect write or truncate activity targeting /etc/passwd.
+#  This provides a narrow FIM rule for high-value file modification alerts.
+#
 apiVersion: cilium.io/v1alpha1
 kind: TracingPolicy
 metadata:

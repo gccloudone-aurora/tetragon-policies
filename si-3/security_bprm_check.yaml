@@ -1,3 +1,11 @@
+# This tracing policy 'sample-no-exec-id' monitors the security_bprm_check
+# kernel hook for a specific target executable.
+#
+# Description:
+#  Captures the process load validation event when /usr/bin/sample-exec is
+#  launched. This is useful for monitoring a particular binary's exec path
+#  and understanding how the kernel validates process loading.
+#
 apiVersion: cilium.io/v1alpha1
 kind: TracingPolicy
 metadata:

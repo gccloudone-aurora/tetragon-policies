@@ -1,13 +1,15 @@
-# This tracing policy 'process-exec-elf-begin' report the elf binary path
-# being executed, just when we are switching execution to it.
+# This tracing policy 'process-exec-elf-begin' captures the ELF or flat
+# binary path when the kernel is about to switch execution to it.
 #
 # Description:
-#  Report the file path of the new elf or flat binary that is being executed.
+#  Uses the security_bprm_creds_from_file probe to record the target file path
+#  of the new process image before execution begins.
+#  This provides visibility into process execution and helps detect suspicious
+#  or unexpected binaries.
 #
 # Limitation:
-#  This does not report different binary format handlers or scripts paths that
-#  are being executed, but will report the final elf or flat binary, like
-#  shebang (!#/bin/bash) used to handle the script.
+#  For shell scripts, it reports the final interpreter binary (for example
+#  /bin/bash), not the original script path.
 #
 apiVersion: cilium.io/v1alpha1
 kind: TracingPolicy

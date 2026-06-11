@@ -6,7 +6,6 @@ These rules are intended to provide runtime observability and response for:
 
 - suspicious binary execution and process creation
 - privilege escalation and credential changes
-- unauthorized network egress and networking tool abuse
 - sensitive path/file monitoring
 
 ## Active manifests
@@ -16,9 +15,8 @@ These rules are intended to provide runtime observability and response for:
 - `security_bprm_check.yaml`
 - `privileges-raise.yaml`
 - `process.credentials.changes.at.syscalls.yaml`
-- `tcp-connect-only-local-addrs.yaml`
-- `tcp-connect-only-private-addrs.yaml`
-- `security-socket-connect-block-others.yaml`
+- `process-creds-changed.yaml`
+- `lsm_file_open.yaml`
 - `filename_monitoring_filtered.yaml`
 
 ## Notes

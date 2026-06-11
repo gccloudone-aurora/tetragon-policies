@@ -1,0 +1,29 @@
+# This tracing policy 'lsm-file-open' monitors Linux Security Module
+# file_open events for selected sensitive files.
+#
+# Description:
+#  Captures file open attempts by chosen binaries against /etc/passwd and
+#  /etc/shadow. This is useful for detecting unusual access to critical
+#  system files via the LSM file_open hook.
+#
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: "lsm-file-open"
+spec:
+  lsmhooks:
+  - hook: "file_open"
+    args:
+      - index: 0
+        type: "file"
+    selectors:
+    - matchBinaries:
+      - operator: "In"
+        values:
+        - "/usr/bin/cat"
+      matchArgs:
+      - index: 0
+        operator: "Equal"
+        values:
+        - "/etc/passwd"
+        - "/etc/shadow"

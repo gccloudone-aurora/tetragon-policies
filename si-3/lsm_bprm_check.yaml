@@ -1,4 +1,12 @@
 
+# This tracing policy 'lsm' monitors the Linux Security Module hook
+# bprm_check_security for selected interpreter executions.
+#
+# Description:
+#  Captures the kernel's security validation step for process loading,
+#  matching specified shell binaries and target program path suffixes.
+#  It is useful for observing or enforcing suspicious shell execution patterns.
+#
 apiVersion: cilium.io/v1alpha1
 kind: TracingPolicy
 metadata:
