@@ -1,4 +1,3 @@
-
 # This tracing policy 'lsm' monitors the Linux Security Module hook
 # bprm_check_security for selected interpreter executions.
 #
