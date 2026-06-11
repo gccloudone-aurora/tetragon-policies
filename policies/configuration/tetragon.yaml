@@ -1,12 +1,10 @@
-#  This file is part of Tetragon.
+# Tetragon runtime configuration for cluster deployment.
 #
-# Entries in this file show the compile time defaults. Local configuration
-# should be created by editing and copying this file into
-# /etc/tetragon/tetragon.yaml, or by creating "drop-ins" in the
-# /etc/tetragon/tetragon.conf.d/ subdirectory. The latter is generally
-# recommended. Defaults can be restored by simply deleting this file and
-# all drop-ins.
+# This configuration is inspired by a cluster deployment from The Zone at StatCan
+# and the generic upstream runtime template. It is tuned for a Kubernetes security
+# observability deployment and retains the security-relevant controls.
 #
+# Deploy as /etc/tetragon/tetragon.yaml or use corresponding Helm chart values.
 
 bpf-lib: /var/lib/tetragon/
 btf:
@@ -15,20 +13,20 @@ tracing-policy:
 debug: false
 disable-kprobe-multi: false
 enable-export-aggregation: false
-enable-k8s-api: false
-enable-ancestors: ""
-enable-process-cred: false
-enable-process-ns: false
+enable-k8s-api: true
+enable-ancestors: true
+enable-process-cred: true
+enable-process-ns: true
 event-queue-size: 10000
 export-aggregation-buffer-size: 10000
 export-aggregation-window-size: 15s
 export-allowlist:
 export-denylist:
-export-file-compress: false
-export-file-max-backups: 5
-export-file-max-size-mb: 10
+export-file-compress: true
+export-file-max-backups: 2
+export-file-max-size-mb: 50
 export-file-rotation-interval: 0s
-export-filename:
+export-filename: /var/run/cilium/tetragon/$(NODE_NAME)/tetragon.log
 export-rate-limit: -1
 field-filters:
 force-small-progs: false

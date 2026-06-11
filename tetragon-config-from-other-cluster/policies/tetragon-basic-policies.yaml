@@ -1,0 +1,66 @@
+---
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: admin-and-package-ops-audit
+  namespace: kube-system
+spec:
+  kprobes:
+    # 1. Catch Targeted Administrative and Reconnaissance Executions via Postfix
+    - call: "sys_execve"
+      syscall: true
+      args:
+        - index: 0
+          type: "string"
+      selectors:
+        - matchArgs: [{ index: 0, operator: "Postfix", values: ["/apt"] }]
+          matchActions: [{ action: Post }]
+        - matchArgs: [{ index: 0, operator: "Postfix", values: ["/apt-get"] }]
+          matchActions: [{ action: Post }]
+        - matchArgs: [{ index: 0, operator: "Postfix", values: ["/dpkg"] }]
+          matchActions: [{ action: Post }]
+        - matchArgs: [{ index: 0, operator: "Postfix", values: ["/apk"] }]
+          matchActions: [{ action: Post }]
+        - matchArgs: [{ index: 0, operator: "Postfix", values: ["/pip"] }]
+          matchActions: [{ action: Post }]
+        - matchArgs: [{ index: 0, operator: "Postfix", values: ["/conda"] }]
+          matchActions: [{ action: Post }]
+        - matchArgs: [{ index: 0, operator: "Postfix", values: ["/sudo"] }]
+          matchActions: [{ action: Post }]
+        - matchArgs: [{ index: 0, operator: "Postfix", values: ["/su"] }]
+          matchActions: [{ action: Post }]
+        - matchArgs: [{ index: 0, operator: "Postfix", values: ["/systemctl"] }]
+          matchActions: [{ action: Post }]
+        - matchArgs: [{ index: 0, operator: "Postfix", values: ["/chmod"] }]
+          matchActions: [{ action: Post }]
+        - matchArgs: [{ index: 0, operator: "Postfix", values: ["/chown"] }]
+          matchActions: [{ action: Post }]
+        - matchArgs: [{ index: 0, operator: "Postfix", values: ["/wget"] }]
+          matchActions: [{ action: Post }]
+        - matchArgs: [{ index: 0, operator: "Postfix", values: ["/curl"] }]
+          matchActions: [{ action: Post }]
+        - matchArgs: [{ index: 0, operator: "Postfix", values: ["/nc"] }]
+          matchActions: [{ action: Post }]
+        - matchArgs: [{ index: 0, operator: "Postfix", values: ["/nmap"] }]
+          matchActions: [{ action: Post }]
+      tags:
+        - "critical-monitoring"
+        - "admin-execution"
+
+    # 2. Catch System Folder/File Lookups (Reads on Passwd, Sudoers, Shadow)
+    - call: "sys_openat"
+      syscall: true
+      args:
+        - index: 1
+          type: "string"
+      selectors:
+        - matchArgs: [{ index: 1, operator: "Postfix", values: ["/passwd"] }]
+          matchActions: [{ action: Post }]
+        - matchArgs: [{ index: 1, operator: "Postfix", values: ["/shadow"] }]
+          matchActions: [{ action: Post }]
+        - matchArgs: [{ index: 1, operator: "Postfix", values: ["/sudoers"] }]
+          matchActions: [{ action: Post }]
+        - matchArgs: [{ index: 1, operator: "Postfix", values: ["/azure.json"] }]
+          matchActions: [{ action: Post }]
+      tags:
+        - "sensitive-file-access"

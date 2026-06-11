@@ -1,0 +1,148 @@
+---
+# Tetragon Helm chart values for cluster deployment.
+#
+# This values file is inspired by a cluster deployment from The Zone at StatCan
+# and is intended as a starting point for your SI-3 security workload.
+# Update the image repository, pull secrets, storage claim, and namespace as needed.
+
+helmChartVersion: "1.6.1"
+
+imagePullSecrets:
+  - name: cnp-image-pull-secret
+
+# Tetragon agent settings
+# These are cluster-focused and security-relevant values.
+tetragon:
+  enabled: true
+  image:
+    repository: artifactory.cloud.statcan.ca/docker-quay-remote/cilium/tetragon
+    tag: v1.6.1
+    pullPolicy: IfNotPresent
+
+  securityContext:
+    privileged: true
+
+  podSecurityContext:
+    runAsUser: 0
+    runAsGroup: 0
+
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  livenessProbe:
+    httpGet:
+      path: /metrics
+      port: 2112
+    initialDelaySeconds: 30
+    periodSeconds: 10
+
+  readinessProbe:
+    httpGet:
+      path: /metrics
+      port: 2112
+    initialDelaySeconds: 5
+    periodSeconds: 5
+
+  hostNetwork: true
+  dnsPolicy: ClusterFirstWithHostNet
+
+  nodeSelector:
+    node-role.kubernetes.io/system: "false"
+
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: DoNotSchedule
+
+  service:
+    enabled: true
+    type: ClusterIP
+    port: 2112
+
+  config:
+    exportFilePath: /var/run/cilium/tetragon/$(NODE_NAME)/tetragon.log
+    exportFileMaxSizeMb: 50
+    exportFileMaxBackups: 2
+    exportFileCompress: true
+
+operator:
+  enabled: true
+  image:
+    repository: artifactory.cloud.statcan.ca/docker-quay-remote/cilium/tetragon-operator
+    tag: v1.6.1
+    pullPolicy: IfNotPresent
+
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 65532
+    runAsGroup: 65532
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+  service:
+    enabled: true
+    type: ClusterIP
+    port: 2113
+
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchLabels:
+                app.kubernetes.io/name: tetragon-operator
+            topologyKey: kubernetes.io/hostname
+
+  serviceAccount:
+    create: true
+    name: tetragon-operator-service-account
+
+export:
+  stdout:
+    enabled: true
+    image:
+      repository: artifactory.cloud.statcan.ca/docker-quay-remote/cilium/hubble-export-stdout
+      tag: v1.1.0
+      pullPolicy: IfNotPresent
+
+persistence:
+  enabled: true
+  existingClaim: tetragon-logs
+
+prometheus:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    namespace: prometheus-system
+    labels:
+      release: prometheus
+
+rbac:
+  create: true
+
+serviceAccounts:
+  tetragon:
+    create: true
+    name: tetragon
+  operator:
+    create: true
+    name: tetragon-operator-service-account

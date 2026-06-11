@@ -1,0 +1,32 @@
+---
+# Tetragon Logs Persistent Volume Claim
+# Stores log files from all Tetragon agent pods across the cluster.
+#
+# Design:
+# - Single PVC shared by all nodes (DaemonSet pods)
+# - ReadWriteMany access mode allows multiple pods to write simultaneously
+# - Each node writes to its own subdirectory: /var/run/cilium/tetragon/<NODE_NAME>/
+# - This prevents file conflicts while allowing centralized storage
+#
+# Storage Class: azureblob-nfs-premium
+# - Supports ReadWriteMany (required for multi-node access)
+# - Backed by Azure Blob NFS storage
+# - Provides persistent storage independent of node lifecycle
+#
+# Alternative approach considered: Per-node PVCs would provide isolation but
+# require managing many PVCs and don't allow centralized log aggregation.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tetragon-logs
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/name: tetragon
+    app.kubernetes.io/component: logs
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: azureblob-nfs-premium
+  resources:
+    requests:
+      storage: 1Gi
