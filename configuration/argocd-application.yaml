@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'https://github.com/gccloudone-aurora/tetragon-policies.git'
     targetRevision: HEAD
-    path: policies/configuration
+    path: configuration
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: kube-system

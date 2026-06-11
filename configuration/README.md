@@ -5,7 +5,6 @@ This folder contains the runtime deployment artifacts for Tetragon in this repos
 - `kustomization.yaml`: Kustomize application that deploys the Tetragon Helm chart, persistent storage, Prometheus scrape support, and active SI-3 policies.
 - `values.yaml`: Helm chart values for the Tetragon agent/operator and export persistence.
 - `tetragon.yaml`: runtime Tetragon configuration sample for direct config mounting or chart-value translation.
-- `tetragon.conf.d/`: optional drop-in snippets for `/etc/tetragon/tetragon.conf.d/`.
 - `argocd-application.yaml`: example ArgoCD Application manifest for deploying this folder.
 
 Active SI-3 policy definitions are sourced from `../si-3` and are included in the Kustomize application.

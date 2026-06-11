@@ -23,6 +23,6 @@ These rules are intended to provide runtime observability and response for:
 
 ## Notes
 
-- The existing example policies in `policies/archived/` have been preserved for reference.
+- The existing example policies in `archived/` have been preserved for reference.
 - Image scanning is not part of this runtime policy repository; it belongs in the CI/CD pipeline and external scanning tooling.
 - Review and tune these policies before deploying them in production, especially network address selectors and binary matching.
