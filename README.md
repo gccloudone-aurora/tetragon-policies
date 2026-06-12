@@ -4,7 +4,7 @@ A curated repository of Tetragon security observability policies and deployment 
 
 ## Repository structure
 
-- `si-3/`
+ - `policies/`
   - Active SI-3-aligned Tetragon tracing policies selected for a minimal security observability workload.
 - `configuration/`
   - Deployment manifest examples for Tetragon, including a Kustomize application, Helm values, and an ArgoCD app example.

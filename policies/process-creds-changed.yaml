@@ -15,8 +15,6 @@ apiVersion: cilium.io/v1alpha1
 kind: TracingPolicy
 metadata:
   name: "process-creds-changed"
-  #annotations:
-    #author: "Djalal Harouni"
 spec:
   kprobes:
   - call: "commit_creds"
@@ -51,4 +49,3 @@ spec:
       - matchActions:
         - action: Post
           rateLimit: "1m"
-

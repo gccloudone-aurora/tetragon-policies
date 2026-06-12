@@ -1,0 +1,8 @@
+# Minimal kustomize entry for Tetragon policies
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Include the active policy set directories or files here. Keep organization natural
+# for this repo — we expose the `si-3` folder which contains the policy YAMLs.
+resources:
+- policies

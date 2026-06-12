@@ -15,9 +15,6 @@ apiVersion: cilium.io/v1alpha1
 kind: TracingPolicy
 metadata:
   name: "process-exec-elf-begin"
-  #annotations:
-    #description: "Report the path of the elf or flat binary that is being executed"
-    #author: "Djalal Harouni"
 spec:
   kprobes:
   - call: "security_bprm_creds_from_file"
