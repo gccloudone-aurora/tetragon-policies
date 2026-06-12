@@ -4,37 +4,21 @@ A curated repository of Tetragon security observability policies and deployment 
 
 ## Repository structure
 
- - `policies/`
-  - Active SI-3-aligned Tetragon tracing policies selected for a minimal security observability workload.
-- `configuration/`
-  - Deployment manifest examples for Tetragon, including a Kustomize application, Helm values, and an ArgoCD app example.
-- `archived/`
-  - Upstream example policies preserved for reference and comparison.
+- `policies/`
+  - Active Tetragon tracing policies selected for a minimal security observability workload.
 
 ## Deployment
 
-This repository is structured to support deployment with ArgoCD or Kustomize.
-
-### ArgoCD
-
-Use `configuration/argocd-application.yaml` as an example ArgoCD Application manifest.
-Point ArgoCD at `configuration/` to install the Tetragon Helm chart, persistence, observability resources, and active policy set.
+This repository is structured to support deployment with Kustomize.
 
 ### Kustomize
 
-The folder `configuration/` contains `kustomization.yaml`, which:
-
-- installs the Tetragon Helm chart
-- adds a persistent volume claim for Tetragon logs
-- adds a `ServiceMonitor` for Prometheus scraping
-- adds a `NetworkPolicy` for scrape access
-- adds a `PodDisruptionBudget`
-- includes all policy manifests from `si-3/`
+The top-level `kustomization.yaml` exposes the active policy manifests in `policies/`.
 
 ### Notes
 
-- `values.yaml` contains the Helm values used by the Tetragon chart.
-- `tetragon.yaml` is a runtime configuration sample; it is not directly deployed by the Kustomize app.
+- Policy manifests are stored under `policies/`.
+- `kustomization.yaml` is the current entry point for building this repository.
 
 ## How to contribute
 
