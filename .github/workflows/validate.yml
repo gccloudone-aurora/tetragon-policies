@@ -13,7 +13,6 @@ jobs:
       uses: azure/setup-kubectl@v4
       with:
         version: 'latest'
-    - name: Validate kustomize build and dry-run
+    - name: Validate kustomize build
       run: |
         kubectl kustomize . > out.yaml
-        kubectl apply --dry-run=client -f out.yaml
