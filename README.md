@@ -1,37 +1,103 @@
 # Tetragon Policies
 
-A curated repository of Tetragon security observability policies and deployment configuration for Kubernetes.
+Tetragon is an Aurora platform security component that provides kernel-level runtime visibility into Kubernetes nodes and workloads.  
+
+Tetragon TracingPolicies generate telemetry that may be:  
+
+- Forwarded to the Log Analytics workspace for Sentinel analytics
+- Exposed as metrics for Prometheus
+- Stored or queried through Loki
+- Visualized through Grafana
+- Routed through Alertmanager
+- Delivered by email or Microsoft Teams
 
 ## Repository structure
 
-- `policies/`
-  - Active Tetragon tracing policies selected for a minimal security observability workload.
-
-## Deployment
-
-This repository is structured to support deployment with Kustomize.
-
-### Kustomize
-
-The top-level `kustomization.yaml` exposes the active policy manifests in `policies/`.
-
-### Notes
-
 - Policy manifests are stored under `policies/`.
+  - Active Tetragon tracing policies have been selected for a minimal security observability workload.
 - `kustomization.yaml` is the current entry point for building this repository.
 
-## How to contribute
+## Domain
 
-See [CONTRIBUTING.md](CONTRIBUTING.md)
+Tetragon organizes its security observability capabilities into key domains: 
 
-## License
+- Monitoring
+- Credential Lifecycle
+- Privilege Escalation
+- File Access and Integrity
 
-This project is covered under Crown Copyright, Government of Canada, and is distributed under the [MIT License](LICENSE).
+Each domain focuses on specific kernel-level events and provides targeted analytics and alerts to detect and respond to security threats in Kubernetes environments.  
 
-The Canada wordmark and related graphics associated with this distribution are protected under trademark law and copyright law. No permission is granted to use them outside the parameters of the Government of Canada's corporate identity program. For more information, see [Federal identity requirements](https://www.canada.ca/en/treasury-board-secretariat/topics/government-communications/federal-identity-requirements.html).
+### Monitoring
 
-## Licence
+| Policy                      | Kernel Hooks / Events         |
+|-----------------------------|-------------------------------|
+| process-exec-elf-begin.yaml | security_bprm_creds_from_file |
+| lsm_bprm_check.yaml         | bprm_check_security           |
+| security_bprm_check.yaml    | security_bprm_check           |
 
-Ce projet est protégé par le droit d'auteur de la Couronne du gouvernement du Canada et distribué sous la [licence MIT](LICENSE).
+Coverage:
 
-Le mot-symbole « Canada » et les éléments graphiques connexes liés à cette distribution sont protégés en vertu des lois portant sur les marques de commerce et le droit d'auteur. Aucune autorisation n'est accordée pour leur utilisation à l'extérieur des paramètres du programme de coordination de l'image de marque du gouvernement du Canada. Pour obtenir davantage de renseignements à ce sujet, veuillez consulter les [Exigences pour l'image de marque](https://www.canada.ca/fr/secretariat-conseil-tresor/sujets/communications-gouvernementales/exigences-image-marque.html).
+- Container process execution tracking
+- Interpreter and shell execution visibility
+- Binary load validation events
+- Scoped binary execution monitoring
+
+Analytics and alerts:
+
+- Execution outside expected binaries
+- Unexpected interpreter usage
+- Anomalous workload execution patterns
+
+### Credential Lifecycle
+
+| Policy                                       | Kernel Hooks                               |
+|----------------------------------------------|--------------------------------------------|
+| process-creds-changed.yaml                   | commit_creds, override_creds, revert_creds |
+| process.credentials.changes.at.syscalls.yaml | setuid/setgid family syscalls              |
+
+Coverage:
+
+- Credential installation and transition events
+- Temporary privilege overrides
+- UID / GID transitions during execution
+
+Analytics and alerts:
+
+- Anomalous credential transitions
+- Suspicious privilege context switching
+
+### Privilege Escalation
+
+| Policy                | Kernel Hooks                                               |
+|-----------------------|------------------------------------------------------------|
+| privileges-raise.yaml | capset, setuid/setgid/setresuid/setresgid, user namespaces |
+
+Coverage:
+
+- Capability escalation
+- UID/GID elevation to root
+- User namespace privilege acquisition
+
+Analytics and alerts:
+
+- Privilege escalation attempts
+- Container privilege boundary bypass patterns
+
+### File Access and Integrity
+
+| Policy                            | Kernel Hooks                    |
+|-----------------------------------|---------------------------------|
+| filename_monitoring_filtered.yaml | file_permission, mmap, truncate |
+| lsm_file_open.yaml                | file_open                       |
+
+Coverage:
+
+- Sensitive file access, including `/etc/passwd` and `/etc/shadow`
+- File modification and truncation attempts
+- Controlled binary-based sensitive file reads
+
+Analytics and alerts:
+
+- Sensitive file access attempts
+- Credential database access attempts
