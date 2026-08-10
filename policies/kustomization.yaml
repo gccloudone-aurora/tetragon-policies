@@ -3,12 +3,10 @@ kind: Kustomization
 resources:
 - admin-apps-exec.yaml
 - filename_monitoring_filtered.yaml
-- lsm_bprm_check.yaml
-- network-tools-exec.yaml
 - lsm_file_open.yaml
+- network-tools-exec.yaml
 - privileges-raise.yaml
 - process-creds-changed.yaml
 - process-exec-elf-begin.yaml
 - process.credentials.changes.at.syscalls.yaml
-- security_bprm_check.yaml
 - unknown-binary-exec.yaml
