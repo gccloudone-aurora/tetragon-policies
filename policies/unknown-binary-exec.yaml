@@ -1,0 +1,51 @@
+# This 'unknown-binary-exec' Tracing Policy alerts when a binary that is not
+# on the approved allowlist is executed inside a container workload.
+#
+# Description:
+#  Uses the security_bprm_check probe to capture process load validation and
+#  posts an event for any executed binary path not present in the allowlist.
+#  This flags execution of unknown or disallowed binaries.
+#
+# Note:
+#  The allowlist is intentionally minimal and covers common base images. Extend
+#  the values to match the approved binaries for your workloads, otherwise the
+#  policy will be noisy. Use namespace selectors to scope this to specific
+#  workloads if needed.
+#
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: "unknown-binary-exec"
+  annotations:
+    description: "Alerts on execution of unknown or disallowed binaries"
+spec:
+  kprobes:
+  - call: "security_bprm_check"
+    syscall: false
+    args:
+    - index: 0
+      type: "linux_binprm"
+    selectors:
+    - matchNamespaces:
+      - namespace: Pid
+        operator: NotIn
+        values:
+        - "host_ns"
+      matchArgs:
+      - index: 0
+        operator: "NotIn"
+        values:
+        - "/usr/bin/bash"
+        - "/usr/bin/sh"
+        - "/usr/bin/dash"
+        - "/usr/bin/sleep"
+        - "/usr/bin/cat"
+        - "/usr/bin/ls"
+        - "/usr/bin/echo"
+        - "/usr/bin/grep"
+        - "/usr/bin/cp"
+        - "/usr/bin/mv"
+        - "/usr/bin/rm"
+      matchActions:
+      - action: Post
+        rateLimit: "1m"

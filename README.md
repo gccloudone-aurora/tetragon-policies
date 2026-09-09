@@ -33,8 +33,9 @@ Each domain focuses on specific kernel-level events and provides targeted analyt
 | Policy                      | Kernel Hooks / Events         |
 |-----------------------------|-------------------------------|
 | process-exec-elf-begin.yaml | security_bprm_creds_from_file |
-| lsm_bprm_check.yaml         | bprm_check_security           |
-| security_bprm_check.yaml    | security_bprm_check           |
+| admin-apps-exec.yaml        | security_bprm_check           |
+| network-tools-exec.yaml     | security_bprm_check           |
+| unknown-binary-exec.yaml    | security_bprm_check           |
 
 Coverage:
 
@@ -42,12 +43,16 @@ Coverage:
 - Interpreter and shell execution visibility
 - Binary load validation events
 - Scoped binary execution monitoring
+- Admin binary execution monitoring
+- Network tool binary execution monitoring
 
 Analytics and alerts:
 
 - Execution outside expected binaries
 - Unexpected interpreter usage
 - Anomalous workload execution patterns
+- Administrative tool usage
+- Networking tool usage
 
 ### Credential Lifecycle
 

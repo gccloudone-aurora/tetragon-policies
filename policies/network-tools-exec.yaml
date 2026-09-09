@@ -1,0 +1,44 @@
+# This 'network-tools-exec' Tracing Policy alerts when network tooling
+# binaries are executed in a container workload.
+#
+# Description:
+#  Uses the security_bprm_check probe to capture process load validation for
+#  network utilities commonly used for reconnaissance and data exfiltration,
+#  such as curl, wget, nc, socat, and telnet. This helps detect unauthorized
+#  network activity from within workloads.
+#
+# Note:
+#  This policy alerts on execution of the tools themselves. Network
+#  connection-level monitoring is intentionally out of scope.
+#
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: "network-tools-exec"
+  annotations:
+    description: "Alerts on execution of networking tools"
+spec:
+  kprobes:
+  - call: "security_bprm_check"
+    syscall: false
+    args:
+    - index: 0
+      type: "linux_binprm"
+    selectors:
+    - matchNamespaces:
+      - namespace: Pid
+        operator: NotIn
+        values:
+        - "host_ns"
+      matchArgs:
+      - index: 0
+        operator: "In"
+        values:
+        - "/usr/bin/curl"
+        - "/usr/bin/wget"
+        - "/usr/bin/nc"
+        - "/usr/bin/socat"
+        - "/usr/bin/telnet"
+      matchActions:
+      - action: Post
+        rateLimit: "1m"

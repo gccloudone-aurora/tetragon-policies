@@ -1,0 +1,43 @@
+# This 'admin-apps-exec' Tracing Policy alerts when administrative binaries
+# are executed in a container workload.
+#
+# Description:
+#  Uses the security_bprm_check probe to capture process load validation for
+#  admin tooling such as package managers, privilege switching, and file
+#  permission changes. This helps detect administrative activity inside
+#  workloads that should normally be restricted.
+#
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: "admin-apps-exec"
+  annotations:
+    description: "Alerts on execution of administrative binaries"
+spec:
+  kprobes:
+  - call: "security_bprm_check"
+    syscall: false
+    args:
+    - index: 0
+      type: "linux_binprm"
+    selectors:
+    - matchNamespaces:
+      - namespace: Pid
+        operator: NotIn
+        values:
+        - "host_ns"
+      matchArgs:
+      - index: 0
+        operator: "In"
+        values:
+        - "/usr/bin/apt"
+        - "/usr/bin/apt-get"
+        - "/usr/bin/dpkg"
+        - "/usr/bin/sudo"
+        - "/usr/bin/su"
+        - "/usr/bin/chmod"
+        - "/usr/bin/chown"
+        - "/usr/bin/chroot"
+      matchActions:
+      - action: Post
+        rateLimit: "1m"
