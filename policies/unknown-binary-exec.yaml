@@ -33,7 +33,7 @@ spec:
         - "host_ns"
       matchArgs:
       - index: 0
-        operator: "NotIn"
+        operator: "NotEqual"
         values:
         - "/usr/bin/bash"
         - "/usr/bin/sh"

@@ -32,7 +32,7 @@ spec:
         - "host_ns"
       matchArgs:
       - index: 0
-        operator: "In"
+        operator: "Equal"
         values:
         - "/usr/bin/curl"
         - "/usr/bin/wget"
