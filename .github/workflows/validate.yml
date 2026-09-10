@@ -1,18 +1,44 @@
-name: Validate kustomize
+name: Validate policies
 
 on:
   push:
   pull_request:
+
+env:
+  # Keep these in sync with scripts/kubeconform-validate.sh
+  TETRAGON_VERSION: v1.7.1
+  KUBECONFORM_VERSION: v0.8.0
+  KUBECONFORM_SHA256: 9bc2bffbf71f261128533edaf912153948b7ff238f9a531ae6d34466ec287883
 
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+
     - name: Setup kubectl
       uses: azure/setup-kubectl@v4
       with:
         version: 'latest'
-    - name: Validate kustomize build
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+
+    - name: Install PyYAML
+      run: pip install pyyaml
+
+    - name: Install kubeconform
       run: |
-        kubectl kustomize . > out.yaml
+        set -euo pipefail
+        tarball="kubeconform-linux-amd64.tar.gz"
+        url="https://github.com/yannh/kubeconform/releases/download/${KUBECONFORM_VERSION}/${tarball}"
+        curl -fsSL "$url" -o "$tarball"
+        echo "${KUBECONFORM_SHA256}  ${tarball}" | sha256sum -c -
+        tar -xzf "$tarball" kubeconform
+        sudo install -m 0755 kubeconform /usr/local/bin/kubeconform
+        kubeconform -v
+
+    - name: Validate policies against Tetragon CRD schema
+      run: bash scripts/kubeconform-validate.sh
